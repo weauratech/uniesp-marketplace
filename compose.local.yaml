@@ -1,0 +1,5 @@
+services:
+  uniesp-marketplace:
+    build:
+      context: .
+      dockerfile: Dockerfile.local

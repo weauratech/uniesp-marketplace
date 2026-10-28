@@ -1,0 +1,22 @@
+{
+  "name": "uniesp-marketplace",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/index.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "build": "npm --prefix web run build"
+  },
+  "dependencies": {
+    "jose": "^6.2.13",
+    "nodemailer": "^10.2.1",
+    "stripe": "^23.0.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  },
+  "license": "MIT"
+}

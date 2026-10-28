@@ -1,0 +1,12 @@
+node_modules
+web/node_modules
+web/dist
+data
+.env
+.env.*
+.git
+*.sqlite*
+tests
+docs
+
+.local-build/runtime

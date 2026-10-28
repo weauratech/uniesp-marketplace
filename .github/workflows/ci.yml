@@ -1,0 +1,43 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    name: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            web/package-lock.json
+      - name: Validate publication boundary
+        run: |
+          node scripts/check-publication.mjs --self-test
+          node scripts/check-publication.mjs
+      - name: Install locked dependencies without lifecycle scripts
+        run: |
+          npm ci --ignore-scripts --no-fund
+          npm --prefix web ci --ignore-scripts --no-fund
+      - name: Test server and security boundaries
+        run: npm test
+      - name: Typecheck and build web
+        run: npm run build
+      - name: Audit dependencies
+        run: |
+          npm audit --audit-level=high
+          npm --prefix web audit --audit-level=high

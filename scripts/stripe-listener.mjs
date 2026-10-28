@@ -1,0 +1,14 @@
+import{spawn}from'node:child_process';
+import{readFileSync,writeFileSync,chmodSync}from'node:fs';
+import{fileURLToPath}from'node:url';
+process.chdir(fileURLToPath(new URL('..',import.meta.url)));
+const key=readFileSync('data/secrets/stripe-secret-key','utf8').trim();
+if(!/^(sk|rk)_test_[A-Za-z0-9]+$/.test(key))throw Error('Somente chave de teste é permitida.');
+const child=spawn(process.env.STRIPE_CLI||'stripe',['listen','--events','checkout.session.completed,checkout.session.async_payment_succeeded','--forward-to','http://127.0.0.1:5177/api/webhooks/stripe'],{env:{...process.env,STRIPE_API_KEY:key,STRIPE_DEVICE_NAME:'uniesp-local-workshop'},stdio:['ignore','pipe','pipe']});
+let ready=false;
+const redact=s=>s.replace(/(?:sk|rk|pk)_(?:test|live)_[A-Za-z0-9._-]+|whsec_[A-Za-z0-9]+/g,'[CREDENCIAL OCULTA]');
+const consume=data=>{const raw=data.toString();const secret=raw.match(/whsec_[A-Za-z0-9]+/);if(secret){writeFileSync('data/secrets/stripe-webhook-secret',secret[0]+'\n',{mode:0o600});chmodSync('data/secrets/stripe-webhook-secret',0o600);ready=true;}process.stdout.write(redact(raw));};
+child.stdout.on('data',consume);child.stderr.on('data',consume);
+child.on('error',()=>{console.error('Não foi possível iniciar Stripe CLI; instale a CLI oficial e execute novamente.');process.exitCode=1;});
+child.on('exit',code=>{if(!ready)console.error('Listener não ficou pronto; eventos externos não serão encaminhados.');process.exitCode=code||0;});
+for(const signal of ['SIGTERM','SIGINT'])process.on(signal,()=>child.kill(signal));

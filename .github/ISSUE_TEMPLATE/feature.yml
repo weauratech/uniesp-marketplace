@@ -1,0 +1,22 @@
+name: Propor melhoria
+description: Descrever um caso de uso e critérios de aceite.
+title: '[Melhoria] '
+labels: []
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema e público afetado
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Comportamento proposto e critérios de aceite
+    validations:
+      required: true
+  - type: textarea
+    id: privacy
+    attributes:
+      label: Impacto em segurança e privacidade
+      description: Não inclua dados pessoais, credenciais ou vulnerabilidades exploráveis.

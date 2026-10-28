@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Relatar vulnerabilidade de forma privada
+    url: https://github.com/weauratech/uniesp-marketplace/security/advisories/new
+    about: Não publique vulnerabilidades exploráveis, credenciais ou dados pessoais em issues.

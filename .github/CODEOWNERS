@@ -1,0 +1,7 @@
+# Review ownership; enforced by the repository branch protection/ruleset.
+* @moliveira-weaura
+/.github/ @moliveira-weaura
+/AGENTS.md @moliveira-weaura
+/SECURITY.md @moliveira-weaura
+/server/ @moliveira-weaura
+/scripts/ @moliveira-weaura

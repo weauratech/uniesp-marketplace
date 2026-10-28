@@ -1,0 +1,12 @@
+{
+  "licenses/Montserrat-OFL.txt": "https://raw.githubusercontent.com/google/fonts/main/ofl/montserrat/OFL.txt",
+  "licenses/SourceSansPro-OFL.txt": "https://raw.githubusercontent.com/google/fonts/f1467d58f677b4be9450f2f39f10a600d3846258/ofl/sourcesanspro/OFL.txt",
+  "fonts/montserrat-400.woff2": "https://fonts.gstatic.com/s/montserrat/v31/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-.ttf",
+  "fonts/montserrat-500.woff2": "https://fonts.gstatic.com/s/montserrat/v31/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtZ6Ew-.ttf",
+  "fonts/montserrat-600.woff2": "https://fonts.gstatic.com/s/montserrat/v31/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCu170w-.ttf",
+  "fonts/montserrat-700.woff2": "https://fonts.gstatic.com/s/montserrat/v31/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCuM70w-.ttf",
+  "fonts/source-sans-pro-400.woff2": "https://fonts.gstatic.com/s/sourcesanspro/v24/6xK3dSBYKcSV-LCoeQqfX1RYOo3aPw.ttf",
+  "fonts/source-sans-pro-600.woff2": "https://fonts.gstatic.com/s/sourcesanspro/v24/6xKydSBYKcSV-LCoeQqfX1RYOo3i54rAkA.ttf",
+  "fonts/source-sans-pro-700.woff2": "https://fonts.gstatic.com/s/sourcesanspro/v24/6xKydSBYKcSV-LCoeQqfX1RYOo3ig4vAkA.ttf",
+  "placeholders": "SVGs originais desta demonstração; não são artes ou logotipos oficiais."
+}

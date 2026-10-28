@@ -1,0 +1,105 @@
+services:
+  uniesp-marketplace:
+    build: .
+    ports:
+      - "127.0.0.1:5177:3002"
+    environment:
+      APP_ORIGIN: http://127.0.0.1:5177
+      PAYMENT_MODE: demo
+      PAYMENT_PROVIDER: none
+      OIDC_ISSUER: http://127.0.0.1:8088/realms/uniesp
+      OIDC_INTERNAL_URL: http://keycloak:8080/realms/uniesp
+      OIDC_CLIENT_ID: uniesp-web
+      OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_client_secret
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+      SMTP_FROM: no-reply@uniesp.local
+    secrets:
+      - oidc_client_secret
+    volumes:
+      - uniesp-data:/app/data
+    init: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    stop_grace_period: 15s
+    mem_limit: 512m
+    cpus: 1
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "2"}
+  identity-db:
+    image: postgres:18.6-alpine
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD_FILE: /run/secrets/identity_db_password
+    secrets: [identity_db_password]
+    volumes: [identity-db:/var/lib/postgresql]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U keycloak -d keycloak"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    mem_limit: 384m
+    cpus: 1
+    logging: &bounded-logs
+      driver: json-file
+      options: {max-size: "10m", max-file: "2"}
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.1
+    entrypoint: [/bin/bash, -ec]
+    command:
+      - |
+        export KC_DB_PASSWORD="$$(cat /run/secrets/identity_db_password)"
+        export KC_BOOTSTRAP_ADMIN_PASSWORD="$$(cat /run/secrets/keycloak_admin_password)"
+        exec /opt/keycloak/bin/kc.sh start
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://identity-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_BOOTSTRAP_ADMIN_USERNAME: bootstrap-admin
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME: http://127.0.0.1:8088
+      KC_HEALTH_ENABLED: "true"
+      KC_HTTP_MANAGEMENT_HEALTH_ENABLED: "true"
+    secrets: [identity_db_password, keycloak_admin_password]
+    ports: ["127.0.0.1:8088:8080"]
+    depends_on:
+      identity-db: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, bash, -ec, "exec 3<>/dev/tcp/127.0.0.1/9000; printf 'GET /health/ready HTTP/1.0\r\n\r\n' >&3; head -1 <&3 | grep -q '200'"]
+      interval: 10s
+      timeout: 5s
+      start_period: 90s
+      retries: 30
+    mem_limit: 1g
+    cpus: 2
+    logging: *bounded-logs
+  mailpit:
+    image: axllent/mailpit:v1.32.0
+    ports: ["127.0.0.1:8025:8025"]
+    environment:
+      MP_MAX_MESSAGES: "200"
+      MP_DATABASE: /data/mailpit.db
+    volumes: [mailpit-data:/data]
+    healthcheck:
+      test: [CMD, /mailpit, readyz]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    mem_limit: 128m
+    cpus: 0.5
+    logging: *bounded-logs
+secrets:
+  identity_db_password:
+    file: ./data/secrets/identity-db-password
+  keycloak_admin_password:
+    file: ./data/secrets/keycloak-admin-password
+  oidc_client_secret:
+    file: ./data/secrets/oidc-client-secret
+volumes:
+  identity-db:
+  mailpit-data:
+  uniesp-data:
