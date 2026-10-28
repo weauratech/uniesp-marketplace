@@ -1,11 +1,11 @@
-FROM node:22-alpine AS web-build
+FROM node:26-alpine AS web-build
 WORKDIR /app/web
 COPY web/package*.json ./
 RUN npm ci --no-audit --no-fund
 COPY web/ ./
 RUN npm run build
 
-FROM node:22-alpine
+FROM node:26-alpine
 WORKDIR /app
 ENV NODE_ENV=production HOST=0.0.0.0 PORT=3002 DB_PATH=/app/data/marketplace.sqlite WEB_DIST=/app/web/dist APP_ORIGIN=http://127.0.0.1:5177 PAYMENT_MODE=demo PAYMENT_PROVIDER=none
 COPY package*.json ./
