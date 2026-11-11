@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "jose": "^6.2.13",
-    "nodemailer": "^10.2.1",
+    "nodemailer": "^10.4.0",
     "stripe": "^23.0.1"
   },
   "devDependencies": {
