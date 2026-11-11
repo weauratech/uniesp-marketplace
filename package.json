@@ -11,7 +11,7 @@
     "build": "npm --prefix web run build"
   },
   "dependencies": {
-    "jose": "^6.2.13",
+    "jose": "^6.2.16",
     "nodemailer": "^10.2.1",
     "stripe": "^23.0.1"
   },
